@@ -1,12 +1,13 @@
 package com.uno.ast.visitor;
 
-import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
 import org.eclipse.jdt.core.dom.PrimitiveType;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
+
+import com.uno.ast.visitor.model.ModelProvider;
 
 public class DeclarationVisitor extends ASTVisitor {
 
