@@ -11,10 +11,11 @@ public class ProgramElement {
     public ProgramElement() {
     }
 
-    public ProgramElement(String pkgName, String className, String methodName, boolean isRetVoid, int parmSize) {
+    public ProgramElement(String pkgName, String className, String methodName, String fieldName, boolean isRetVoid, int parmSize) {
         this.pkgName = pkgName;
         this.className = className;
         this.methodName = methodName;
+        this.fieldName = fieldName;
         this.isReturnVoid = isRetVoid;
         this.parameterSize = parmSize;
     }

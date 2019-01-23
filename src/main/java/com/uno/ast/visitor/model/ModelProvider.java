@@ -4,22 +4,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 public enum ModelProvider {
-   INSTANCE;
+    INSTANCE;
 
-   private List<ProgramElement> progElements = new ArrayList<ProgramElement>();;
+    private List<ProgramElement> progElements = new ArrayList<>();
 
-   private ModelProvider() {
-   }
+    private ModelProvider() {
+    }
 
-   public void addProgramElements(String pkgName, String className, String methodName, boolean isRetVoid, int parmSize) {
-      progElements.add(new ProgramElement(pkgName, className, methodName, isRetVoid, parmSize));
-   }
+    public void addProgramElements(String pkgName, String className, String methodName, String fieldName, boolean isRetVoid,
+            int parmSize) {
+        progElements.add(new ProgramElement(pkgName, className, methodName, fieldName, isRetVoid, parmSize));
+    }
 
-   public List<ProgramElement> getProgramElements() {
-      return progElements;
-   }
+    public void clearProgramElements() {
+        progElements.clear();
+    }
 
-   public void clearProgramElements() {
-      progElements.clear();
-   }
+    public List<ProgramElement> getProgramElements() {
+        return progElements;
+    }
 }

@@ -44,8 +44,7 @@ public class DeclarationVisitor extends ASTVisitor {
         }
 
         int parmSize = methodDecl.parameters().size();
-
-        ModelProvider.INSTANCE.addProgramElements(pkgName, className, methodName, isRetVoid, parmSize);
+        ModelProvider.INSTANCE.addProgramElements(pkgName, className, methodName, fieldName, isRetVoid, parmSize);
 
         return super.visit(methodDecl);
 
