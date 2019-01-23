@@ -1,11 +1,13 @@
 package com.uno.ast.visitor;
 
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
 import org.eclipse.jdt.core.dom.PrimitiveType;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
 import com.uno.ast.visitor.model.ModelProvider;
 
@@ -15,6 +17,17 @@ public class DeclarationVisitor extends ASTVisitor {
     private String className;
     private String methodName;
     private String fieldName;
+
+    @Override
+    public boolean visit(FieldDeclaration fieldDecl) {
+        fieldName = "";
+        Object object = fieldDecl.fragments().get(0);
+        if (object instanceof VariableDeclarationFragment) {
+            fieldName = ((VariableDeclarationFragment) object).getName().toString();
+        }
+        return super.visit(fieldDecl);
+
+    }
 
     @Override
     public boolean visit(MethodDeclaration methodDecl) {
@@ -49,4 +62,5 @@ public class DeclarationVisitor extends ASTVisitor {
         className = typeDecl.getName().getIdentifier();
         return super.visit(typeDecl);
     }
+
 }
