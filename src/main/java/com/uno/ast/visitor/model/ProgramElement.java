@@ -1,65 +1,74 @@
 package com.uno.ast.visitor.model;
 
 public class ProgramElement {
-   private String pkgName;
-   private String className;
-   private String methodName;
-   private boolean isReturnVoid;
-   private Integer parameterSize;
+    private String pkgName;
+    private String className;
+    private String methodName;
+    private String fieldName;
+    private boolean isReturnVoid;
+    private Integer parameterSize;
 
-   public ProgramElement() {
-   }
+    public ProgramElement() {
+    }
 
-   public ProgramElement(String pkgName, String className, String methodName, boolean isRetVoid, int parmSize) {
-      this.pkgName = pkgName;
-      this.className = className;
-      this.methodName = methodName;
-      this.isReturnVoid = isRetVoid;
-      this.parameterSize = parmSize;
-   }
+    public ProgramElement(String pkgName, String className, String methodName, boolean isRetVoid, int parmSize) {
+        this.pkgName = pkgName;
+        this.className = className;
+        this.methodName = methodName;
+        this.isReturnVoid = isRetVoid;
+        this.parameterSize = parmSize;
+    }
 
-   public String getPkgName() {
-      return pkgName;
-   }
+    public String getClassName() {
+        return className;
+    }
 
-   public void setPkgName(String pkgName) {
-      this.pkgName = pkgName;
-   }
+    public String getFieldName() {
+        return fieldName;
+    }
 
-   public String getClassName() {
-      return className;
-   }
+    public String getMethodName() {
+        return methodName;
+    }
 
-   public void setClassName(String className) {
-      this.className = className;
-   }
+    public Integer getParameterSize() {
+        return parameterSize;
+    }
 
-   public String getMethodName() {
-      return methodName;
-   }
+    public String getPkgName() {
+        return pkgName;
+    }
 
-   public void setMethodName(String methodName) {
-      this.methodName = methodName;
-   }
+    public boolean isReturnVoid() {
+        return isReturnVoid;
+    }
 
-   public boolean isReturnVoid() {
-      return isReturnVoid;
-   }
+    public void setClassName(String className) {
+        this.className = className;
+    }
 
-   public void setReturnVoid(boolean isReturnVoid) {
-      this.isReturnVoid = isReturnVoid;
-   }
+    public void setFieldName(String fieldName) {
+        this.fieldName = fieldName;
+    }
 
-   public Integer getParameterSize() {
-      return parameterSize;
-   }
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
+    }
 
-   public void setParameterSize(Integer parameterSize) {
-      this.parameterSize = parameterSize;
-   }
+    public void setParameterSize(Integer parameterSize) {
+        this.parameterSize = parameterSize;
+    }
 
-   @Override
-   public String toString() {
-      return pkgName + "." + className + "." + methodName;
-   }
+    public void setPkgName(String pkgName) {
+        this.pkgName = pkgName;
+    }
+
+    public void setReturnVoid(boolean isReturnVoid) {
+        this.isReturnVoid = isReturnVoid;
+    }
+
+    @Override
+    public String toString() {
+        return pkgName + "." + className + "." + methodName + "." + fieldName;
+    }
 }
