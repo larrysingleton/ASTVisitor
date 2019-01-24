@@ -1,5 +1,6 @@
 package com.uno.ast.visitor;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.text.ParseException;
 import java.util.List;
@@ -28,16 +29,16 @@ public class ASTSimpleVisitorCounter {
 	public static int classCounter;
 	public static int fieldCounter;
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 
 		String targetPath = parseInputArgs(args);
 		List<Path> javaFiles = UTFile.getFileListRecursive(targetPath, "*.java");
-		resetCounters();
 
 		for (Path path : javaFiles) {
 			String javaFilePath = path.toAbsolutePath().toString();
-
 			final CompilationUnit cu = getCompilationUnit(javaFilePath);
+			resetCounters();
+
 			cu.accept(new ASTVisitor() {
 				@Override
 				public boolean visit(TypeDeclaration typeDecl) {
@@ -86,14 +87,12 @@ public class ASTSimpleVisitorCounter {
 		return inputPath;
 	}
 
-	private static CompilationUnit getCompilationUnit(String sourcePath) {
+	private static CompilationUnit getCompilationUnit(String sourcePath) throws IOException {
 		ASTParser parser = ASTParser.newParser(AST.JLS11);
-
 		parser.setResolveBindings(true);
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);
-		parser.setSource(
-				"public class A { int i = 9;  \n int j;\n ArrayList<Integer> al = new ArrayList<Integer>();j=1000; public void A() {int x = 5;}\n }"
-						.toCharArray());
+		String entireFile = UTFile.readEntireFile(sourcePath);
+		parser.setSource(entireFile.toCharArray());
 
 		Map<String, String> options = JavaCore.getOptions();
 		options.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_8);
@@ -106,8 +105,8 @@ public class ASTSimpleVisitorCounter {
 	}
 
 	private static void resetCounters() {
-		ASTSimpleVisitorCounter.fieldCounter = 0;
 		ASTSimpleVisitorCounter.classCounter = 0;
 		ASTSimpleVisitorCounter.methodCounter = 0;
+		ASTSimpleVisitorCounter.fieldCounter = 0;
 	}
 }
