@@ -6,6 +6,7 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 public class ASTVisitorCounter extends ASTVisitor {
+	
     private int methodCounter;
     private int classCounter;
     private int fieldCounter;
@@ -28,6 +29,10 @@ public class ASTVisitorCounter extends ASTVisitor {
         ++methodCounter;
     }
 
+    public ASTCounter getASTCounter() {
+    	return new ASTCounter(classCounter, methodCounter, fieldCounter);
+    }
+    
     @Override
     public String toString() {
         return classCounter + "," + methodCounter + "," + fieldCounter;

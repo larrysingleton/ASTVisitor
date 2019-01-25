@@ -20,64 +20,80 @@ import com.uno.ast.visitor.util.UTFile;
 
 public class ASTSimpleVisitorCounter {
 
-    public static String analyzeAST(Path path) throws IOException {
-        String javaFilePath = path.toAbsolutePath().toString();
-        final CompilationUnit cu = getCompilationUnit(javaFilePath);
+	static ASTCounter counter = new ASTCounter();
+	static boolean debugFlag = false;
 
-        ASTVisitorCounter visitor = new ASTVisitorCounter();
-        cu.accept(visitor);
-        return javaFilePath + "," + visitor.toString();
-    }
+	public static String analyzeAST(Path path) throws IOException {
+		String javaFilePath = path.toAbsolutePath().toString();
+		final CompilationUnit cu = getCompilationUnit(javaFilePath);
 
-    public static void main(String[] args) throws IOException {
+		ASTVisitorCounter visitor = new ASTVisitorCounter();
+		cu.accept(visitor);
+		counter.addCounter(visitor.getASTCounter());
+		return javaFilePath + "," + visitor.toString();
+	}
 
-        String targetPath = parseInputArgs(args);
-        List<Path> javaFiles = UTFile.getFileListRecursive(targetPath, "*.java");
+	public static void main(String[] args) throws IOException {
 
-        for (Path path : javaFiles) {
-            String ret = analyzeAST(path);
-            System.out.println(ret);
-        }
+		String targetPath = parseInputArgs(args);
+		List<Path> javaFiles = UTFile.getFileListRecursive(targetPath, "*.java");
 
-    }
+		for (Path path : javaFiles) {
+			String ret = analyzeAST(path);
 
-    private static CompilationUnit getCompilationUnit(String sourcePath) throws IOException {
-        ASTParser parser = ASTParser.newParser(AST.JLS11);
-        parser.setResolveBindings(true);
-        parser.setKind(ASTParser.K_COMPILATION_UNIT);
-        String entireFile = UTFile.readEntireFile(sourcePath);
-        parser.setSource(entireFile.toCharArray());
+			if (debugFlag) {
+				System.out.println(ret);
+			}
+		}
 
-        Map<String, String> options = JavaCore.getOptions();
-        options.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_8);
-        options.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_8);
-        options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
-        parser.setCompilerOptions(options);
+		System.out.println(targetPath + "," + counter.toString());
+	}
 
-        return (CompilationUnit) parser.createAST(null);
-    }
+	private static CompilationUnit getCompilationUnit(String sourcePath) throws IOException {
+		ASTParser parser = ASTParser.newParser(AST.JLS11);
+		parser.setResolveBindings(true);
+		parser.setKind(ASTParser.K_COMPILATION_UNIT);
+		String entireFile = UTFile.readEntireFile(sourcePath);
+		parser.setSource(entireFile.toCharArray());
 
-    private static String parseInputArgs(String[] args) {
-        String inputPath = null;
-        Options options = new Options();
+		Map<String, String> options = JavaCore.getOptions();
+		options.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_8);
+		options.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_8);
+		options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
+		parser.setCompilerOptions(options);
 
-        Option input = new Option("i", "input", true, "javaProjectRootPath");
-        input.setRequired(true);
-        options.addOption(input);
+		return (CompilationUnit) parser.createAST(null);
+	}
 
-        CommandLineParser parser = new DefaultParser();
-        HelpFormatter formatter = new HelpFormatter();
-        CommandLine cmd;
+	private static String parseInputArgs(String[] args) {
+		String inputPath = null;
+		Options options = new Options();
 
-        try {
-            cmd = parser.parse(options, args);
-            inputPath = cmd.getOptionValue("input");
-        } catch (org.apache.commons.cli.ParseException e) {
-            System.out.println(e.getMessage());
-            formatter.printHelp("ASTSimpleVisitorCounter", options);
-            System.exit(1);
-        }
+		Option input = new Option("i", "input", true, "javaProjectRootPath");
+		Option debug = new Option("d", "debug", false, "debug flag");
 
-        return inputPath;
-    }
+		input.setRequired(true);
+		debug.setRequired(false);
+
+		options.addOption(input);
+		options.addOption(debug);
+
+		CommandLineParser parser = new DefaultParser();
+		HelpFormatter formatter = new HelpFormatter();
+		CommandLine cmd;
+
+		try {
+			cmd = parser.parse(options, args);
+			inputPath = cmd.getOptionValue("input");
+			if (cmd.hasOption("debug")) {
+				debugFlag = true;
+			}
+		} catch (org.apache.commons.cli.ParseException e) {
+			System.out.println(e.getMessage());
+			formatter.printHelp("ASTSimpleVisitorCounter", options);
+			System.exit(1);
+		}
+
+		return inputPath;
+	}
 }
