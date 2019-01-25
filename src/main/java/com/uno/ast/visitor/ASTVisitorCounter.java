@@ -50,7 +50,7 @@ public class ASTVisitorCounter extends ASTVisitor {
                 return false;
             }
         } catch (Exception e) {
-            return false;
+            // Do nothing
         }
 
         incMethodCounter();
