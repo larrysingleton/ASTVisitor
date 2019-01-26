@@ -23,17 +23,21 @@ public class ASTSimpleVisitorCounter {
 	static ASTCounter counter = new ASTCounter();
 	static boolean debugFlag = false;
 
-	public static String analyzeAST(Path path) throws IOException {
+	public static String analyzeAST(Path path) {
 		String javaFilePath = path.toAbsolutePath().toString();
 		final CompilationUnit cu = getCompilationUnit(javaFilePath);
 
+		if (cu == null) {
+			return null;
+		}
+		
 		ASTVisitorCounter visitor = new ASTVisitorCounter();
 		cu.accept(visitor);
 		counter.addCounter(visitor.getASTCounter());
 		return javaFilePath + "," + visitor.toString();
 	}
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args)  {
 
 		String targetPath = parseInputArgs(args);
 		List<Path> javaFiles = UTFile.getFileListRecursive(targetPath, "*.java");
@@ -41,7 +45,7 @@ public class ASTSimpleVisitorCounter {
 		for (Path path : javaFiles) {
 			String ret = analyzeAST(path);
 
-			if (debugFlag) {
+			if (ret != null && debugFlag) {
 				System.out.println(ret);
 			}
 		}
@@ -49,18 +53,24 @@ public class ASTSimpleVisitorCounter {
 		System.out.println(targetPath + "," + counter.toString());
 	}
 
-	private static CompilationUnit getCompilationUnit(String sourcePath) throws IOException {
-		ASTParser parser = ASTParser.newParser(AST.JLS11);
-		parser.setResolveBindings(true);
-		parser.setKind(ASTParser.K_COMPILATION_UNIT);
-		String entireFile = UTFile.readEntireFile(sourcePath);
-		parser.setSource(entireFile.toCharArray());
-
+	private static CompilationUnit getCompilationUnit(String sourcePath)  {
 		Map<String, String> options = JavaCore.getOptions();
 		options.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_8);
 		options.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_8);
 		options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
+
+		ASTParser parser = ASTParser.newParser(AST.JLS11);
+		parser.setResolveBindings(true);
+		parser.setKind(ASTParser.K_COMPILATION_UNIT);
 		parser.setCompilerOptions(options);
+
+		String entireFile;
+		try {
+			entireFile = UTFile.readEntireFile(sourcePath);
+			parser.setSource(entireFile.toCharArray());
+		} catch (IOException e) {
+			return null;
+		}
 
 		return (CompilationUnit) parser.createAST(null);
 	}
