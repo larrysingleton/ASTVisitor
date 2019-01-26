@@ -6,7 +6,7 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 public class ASTVisitorCounter extends ASTVisitor {
-	
+
     private int methodCounter;
     private int classCounter;
     private int fieldCounter;
@@ -15,6 +15,10 @@ public class ASTVisitorCounter extends ASTVisitor {
         this.methodCounter = 0;
         this.classCounter = 0;
         this.fieldCounter = 0;
+    }
+
+    public ASTCounter getASTCounter() {
+        return new ASTCounter(classCounter, methodCounter, fieldCounter);
     }
 
     public void incClassCounter() {
@@ -29,10 +33,6 @@ public class ASTVisitorCounter extends ASTVisitor {
         ++methodCounter;
     }
 
-    public ASTCounter getASTCounter() {
-    	return new ASTCounter(classCounter, methodCounter, fieldCounter);
-    }
-    
     @Override
     public String toString() {
         return classCounter + "," + methodCounter + "," + fieldCounter;
@@ -47,6 +47,10 @@ public class ASTVisitorCounter extends ASTVisitor {
     @Override
     public boolean visit(MethodDeclaration methodDecl) {
 
+        if (methodDecl.getBody() == null || methodDecl.getLength() == 0) {
+            return false;
+        }
+
         // guard against Anonymous Types
         try {
             // Used to exclude method declarations in an interface class
@@ -54,6 +58,7 @@ public class ASTVisitorCounter extends ASTVisitor {
             if (parentTypeDecl.isInterface()) {
                 return false;
             }
+
         } catch (Exception e) {
             // Do nothing
         }
